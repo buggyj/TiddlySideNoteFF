@@ -1,0 +1,45 @@
+{
+
+  "manifest_version": 2,
+  "name": "Tiddly Side Note",
+  "description": "tiddlers side not",
+  "version": "1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "54.0a1"
+    }
+  },
+
+  "icons": {
+    "48": "images/tsn48.png",
+    "16": "images/tsn16.png"
+  },
+	"background" : {
+		"page" : "background.html"
+	},
+	"content_scripts" : [ {
+		"js" : [	
+			"contentScript.js"
+		],
+      "matches" : [
+        "http://*/*",
+        "file:///*",
+        "https://*/*"
+      ]
+      } ],
+  "sidebar_action": {
+    "default_icon": "images/tsn48.png",
+    "default_title" : "Tiddly Side Note",
+    "default_panel": "sidepanel.html"
+  },
+
+  "permissions": [
+ 
+    "contextMenus",
+    "storage",
+    "tabs",
+    "<all_urls>"
+  ]
+
+
+}
