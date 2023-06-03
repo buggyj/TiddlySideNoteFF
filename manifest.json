@@ -39,7 +39,18 @@
     "storage",
     "tabs",
     "<all_urls>"
-  ]
+  ],
+  
+
+"browser_action": {
+  "default_icon": {
+    "48": "images/tsn48.png",
+    "16": "images/tsn16.png"
+  },
+  "default_title": "action side panel"
+}
+
+
 
 
 }

@@ -24,6 +24,6 @@ chrome.contextMenus.onClicked.addListener((data, tab) => {
   
 });
 
-chrome.sidePanel
-  .setPanelBehavior({ openPanelOnActionClick: true })
-  .catch((error) => console.error(error));
+
+browser.browserAction.onClicked.addListener(function(){  
+browser.sidebarAction.toggle()});

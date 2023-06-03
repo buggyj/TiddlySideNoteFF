@@ -185,6 +185,9 @@ function getNote(tabs) {
 	let x = document.querySelector('#edit');
 	let y = document.querySelector('#content');
 	let z = document.querySelector('#icon');
+	document.querySelector('#get').style.display = "block";
+	document.querySelector('#put').style.display = "none";
+	document.querySelector('#cancel').style.display = "none";
 	let editvalue = x.value;
 	x.value = "";//this stops multiple calls to save 
 	x.style.display = "none";
