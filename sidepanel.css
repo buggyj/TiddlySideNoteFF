@@ -1,0 +1,43 @@
+textarea {
+  box-sizing: border-box;
+  width:100%;
+
+}
+
+.reset-button {
+  background-color: transparent;
+  border-width: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+    cursor: pointer;
+  padding: 0;
+}
+
+.tagpill {
+  background-color: yellow;
+  border: none;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+
+.tagpillfalse {
+  background-color: yellow;
+  border: none;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  border-radius: 16px;
+}
+
+
