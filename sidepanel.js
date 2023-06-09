@@ -30,7 +30,9 @@ function restorTags() {
 }
 
 function addDropDown(arr){
-	var options=`<select id="selectdd"><option value="" disabled hidden selected>add tag</option>`;
+	var options;
+	if (arr.length == 0) return;
+	options=`<select id="selectdd"><option value="" disabled hidden selected>add tag</option>`;
 	arr.map((op,i)=>{
 	 options+=`<option value="${op}" id="${i}" style="border-radius: 5px;"">${op}</option>`
 	})
@@ -112,7 +114,7 @@ var getTid = function() {
 			let y = document.querySelector('#content');
 			let x = document.querySelector('#edit');
 			y.style.display = "none";
-			taglist = (JSON.parse(res.aux)).taglist;
+			taglist = (JSON.parse(res.aux)).taglist||[];
 			puttags(res.data,true);
 			//console.log("res.data ",res.data);
 			x.value=(JSON.parse(res.data)).text;
@@ -154,8 +156,14 @@ document.querySelector('#put').addEventListener('click', function() {
 						taglist = aux.taglist;
 						y.innerHTML=data.text;
 						puttags(res.data);
-						if (aux.new=='true') but.style.background='cyan';
-						else but.style.background='red';
+						if (aux.new=='true') {
+							but.style.background='cyan';
+							but.innerHTML="add"
+						}
+						else {
+							but.style.background='red';
+							but.innerHTML="edit"
+						}
 						y.style.display = "block";
 						//console.log("reloaded new");
 					});
@@ -198,7 +206,11 @@ function pullNote(tabs) {
 			if (meta){	console.log("meta",meta.description,meta.mediaImage);
 				current.mediaImage=meta.mediaImage;
 				current.description=meta.description;
-			} else console.log ("meta not defined")
+			} else {
+				console.log ("meta not defined");
+				current.mediaImage="";
+				current.description="";
+			}
 			current.url = tabs[0].url;
 			current.favIconUrl=tabs[0].favIconUrl;
 			current.title=tabs[0].title;
@@ -211,8 +223,14 @@ function pullNote(tabs) {
 				taglist = aux.taglist;
 				y.innerHTML=data.text;
 				puttags(res.data);
-				if (aux.new=='true') but.style.background='cyan';
-				else but.style.background='red';
+				if (aux.new=='true') {
+					but.style.background='cyan';
+					but.innerHTML="add"
+				}
+				else {
+					but.style.background='red';
+					but.innerHTML="edit"
+				}
 				y.style.display = "block";
 				
 			});
@@ -246,7 +264,11 @@ function getNote(tabs) {
 				if (meta){	console.log("meta",meta.description,meta.mediaImage);
 					current.mediaImage=meta.mediaImage;
 					current.description=meta.description;
-				} else console.log ("meta not defined")
+			} else {
+				console.log ("meta not defined");
+				current.mediaImage="";
+				current.description="";
+			}
 				current.url = tabs[0].url;
 				current.favIconUrl=tabs[0].favIconUrl;
 				current.title=tabs[0].title;
@@ -260,8 +282,14 @@ function getNote(tabs) {
 				taglist = aux.taglist;
 				y.innerHTML=data.text;
 				puttags(res.data);
-				if (aux.new=='true') but.style.background='cyan';
-				else but.style.background='red';
+				if (aux.new=='true') {
+					but.style.background='cyan';
+					but.innerHTML="add"
+				}
+				else {
+					but.style.background='red';
+					but.innerHTML="edit"
+				}
 				y.style.display = "block";
 					
 				});
