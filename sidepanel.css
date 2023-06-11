@@ -4,6 +4,8 @@ textarea {
 
 }
 
+.basicbutton {width: 100px;}
+
 .reset-button {
   background-color: transparent;
   border-width: 0;

@@ -1,6 +1,7 @@
 
-
-
+var enableJot = false;
+chrome.storage.local.get({enableJot:false}, function(items){
+enableJot = items.enableJot;
 var offset;
 function addAutoResize() {
   document.querySelectorAll('[data-autoresize]').forEach(function (element) {
@@ -104,10 +105,17 @@ function redoTags(edit){
 }
 
 //-------------GET----------------
-var getTid = function() {
+document.querySelector('#get').addEventListener('click', function() {
 	document.querySelector('#get').style.display = "none";
 	document.querySelector('#put').style.display = "block";
 	document.querySelector('#cancel').style.display = "block";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jot').style.display = "none";
+	document.querySelector('#makejot').style.display = "none";
+
 	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 	  var currUrl = tabs[0].url;
 		browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{url:currUrl}, opts:"edit"},function(res){
@@ -122,12 +130,9 @@ var getTid = function() {
 			x.dispatchEvent(new Event("input"))
 
 		});
+	});
 });
-}
-
-
-
-document.querySelector('#get').addEventListener('click', getTid);	
+	
 
 //-------------PUT--------------
 
@@ -138,6 +143,13 @@ document.querySelector('#put').addEventListener('click', function() {
 	but.style.display = "block"
 	document.querySelector('#put').style.display = "none";
 	document.querySelector('#cancel').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+
+
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+
 	//console.log("emptybox ");
 	//x.value="";
 	//y.style.display = "block";
@@ -158,11 +170,11 @@ document.querySelector('#put').addEventListener('click', function() {
 						puttags(res.data);
 						if (aux.new=='true') {
 							but.style.background='cyan';
-							but.innerHTML="add"
+							//but.innerHTML="add"
 						}
 						else {
 							but.style.background='red';
-							but.innerHTML="edit"
+							//but.innerHTML="edit"
 						}
 						y.style.display = "block";
 						//console.log("reloaded new");
@@ -184,6 +196,11 @@ document.querySelector('#cancel').addEventListener('click', function() {
 	document.querySelector('#get').style.display = "block";
 	document.querySelector('#put').style.display = "none";
 	document.querySelector('#cancel').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+
 	//console.log("emptybox ");
 	x.value="";
 	x.style.display = "none";
@@ -192,14 +209,18 @@ document.querySelector('#cancel').addEventListener('click', function() {
 });	
 //-----------------------------
 function pullNote(tabs) {
-	let x = document.querySelector('#edit');
+	let x = document.querySelector('#edit'),editvalue;
 	let y = document.querySelector('#content');
-	let z = document.querySelector('#icon');
 	let but =	document.querySelector('#get');
-	but.style.display = "block"
+	document.querySelector('#makejot').style.display = "none";
 	document.querySelector('#put').style.display = "none";
 	document.querySelector('#cancel').style.display = "none";
-	let editvalue = x.value;
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+	but.style.display = "block"
+	editvalue = x.value;
 	x.value = "";//this stops multiple calls to save 
 	x.style.display = "none";
 			browser.tabs.sendMessage(tabs[0].id, {action : 'getMeta'}, function (meta)	{ 
@@ -225,11 +246,11 @@ function pullNote(tabs) {
 				puttags(res.data);
 				if (aux.new=='true') {
 					but.style.background='cyan';
-					but.innerHTML="add"
+					//but.innerHTML="add"
 				}
 				else {
 					but.style.background='red';
-					but.innerHTML="edit"
+					//but.innerHTML="edit"
 				}
 				y.style.display = "block";
 				
@@ -239,14 +260,18 @@ function pullNote(tabs) {
   //console.log(tabs[0].url);
 }
 function getNote(tabs) {
-	let x = document.querySelector('#edit');
+	let x = document.querySelector('#edit'),editvalue;
 	let y = document.querySelector('#content');
-	let z = document.querySelector('#icon');
 	let but =	document.querySelector('#get');
-	but.style.display = "block"
+	document.querySelector('#makejot').style.display = "none";
 	document.querySelector('#put').style.display = "none";
 	document.querySelector('#cancel').style.display = "none";
-	let editvalue = x.value;
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+	but.style.display = "block"
+	editvalue = x.value;
 	x.value = "";//this stops multiple calls to save 
 	x.style.display = "none";
 	//first save note
@@ -274,7 +299,6 @@ function getNote(tabs) {
 				current.title=tabs[0].title;
 				current.text = "";
 				current.tags = [];
-				//z.src=tabs[0].favIconUrl;
 				browser.tabs.sendMessage(items.homeTab, {action : 'getTid',data:{url:current.url} ,opts:"render"},function(res){
 				let data = JSON.parse(res.data); 
 				let aux = JSON.parse(res.aux);
@@ -284,11 +308,11 @@ function getNote(tabs) {
 				puttags(res.data);
 				if (aux.new=='true') {
 					but.style.background='cyan';
-					but.innerHTML="add"
+					//but.innerHTML="add"
 				}
 				else {
 					but.style.background='red';
-					but.innerHTML="edit"
+					//but.innerHTML="edit"
 				}
 				y.style.display = "block";
 					
@@ -307,10 +331,75 @@ function onError(error) {
   console.error(`Error: ${error}`);
 }
 
+//-------------PUTJOT--------------
+
+document.querySelector('#jotsave').addEventListener('click', function() {
+	let x = document.querySelector('#makejot')
+	let y = document.querySelector('#content');
+	let but =	document.querySelector('#get');
+	but.style.display = "block"
+	document.querySelector('#put').style.display = "none";
+	document.querySelector('#cancel').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+
+	//console.log("emptybox ");
+	//x.value="";
+	//y.style.display = "block";
+	x.style.display = "none";
+							
+		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		  var currUrl = tabs[0].url;
+				current.text = x.value;
+				x.value="";
+				current.category ="jot";
+				browser.tabs.sendMessage(homeTab, {action : 'paste', data:current, opts:"put"},function(res){
+
+					console.log("jot returned");
 
 
- 
+		});
+	});	
+});
 
+//-------------MAKEJOT----------------
+document.querySelector('#jot').addEventListener('click', makeJot);
+function makeJot() {
+	document.querySelector('#get').style.display = "block";
+	document.querySelector('#put').style.display = "none";
+	document.querySelector('#cancel').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "block";
+	document.querySelector('#hidejot').style.display = "block";
+	document.querySelector('#jotsave').style.display = "block";
+	document.querySelector('#jot').style.display = "none";
+	let x = document.querySelector('#makejot');
+	x.style.display = "block";
+};
+
+//-------------HIDEJOT----------------
+document.querySelector('#hidejot').addEventListener('click', hideJot);
+function hideJot() {
+	document.querySelector('#makejot').style.display = "none";
+    document.querySelector('#get').style.display = "block"
+	document.querySelector('#put').style.display = "none";
+	document.querySelector('#cancel').style.display = "none";
+	document.querySelector('#hidejot').style.display = "none";
+	document.querySelector('#jotsave').style.display = "none";
+	document.querySelector('#jotcancel').style.display = "none";
+if (enableJot) 	document.querySelector('#jot').style.display = "block";
+else 	document.querySelector('#jot').style.display = "none";
+};	
+
+//-------------CLEARJOT----------------
+document.querySelector('#jotcancel').addEventListener('click', function() {
+	let x = document.querySelector('#makejot');
+
+	x.value="";
+});	
+//-----------------------------
 
 browser.runtime.onMessage.addListener(({ name, data }) => {
   if (name === 'doit') {
@@ -358,6 +447,7 @@ function main(){
 	browser.windows.getCurrent({} ,function(Window) {console.log("window is",Window.id);
 		WindowId = Window.id;
 	});
+
 	browser.storage.local.get({conected:"not here",homeTab:""}, function(items){
 		document.querySelector('#home').innerHTML = items.conected;
 		homeTab = items.homeTab;
@@ -368,3 +458,13 @@ function main(){
 	});
 }
 main();
+
+browser.storage.local.onChanged.addListener(function (changes){
+	if (changes.enableJot) {
+		 enableJot = changes.enableJot.newValue;
+		 if (enableJot) hideJot();
+		 else hideJot();
+	 }
+	
+	});
+});

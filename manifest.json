@@ -40,6 +40,9 @@
     "tabs",
     "<all_urls>"
   ],
+   "options_ui": {
+    "page": "options.html"
+  },
   
 
 "browser_action": {

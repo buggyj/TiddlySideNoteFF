@@ -5,7 +5,15 @@
   </head>
   <body>
     home wiki- <p id="home">not connected</p>
-   <div> <img id="icon" src=""/><button id="get" style="background:red;width:25%;">edit</button> <button id="put" style="background:lightgreen;width:25%;">save</button> <button id="cancel" style="background:orange;width:25%;">cancel</button></div>
+   <div> 
+   <button class="basicbutton" id="get"       style="background:red;;display:none;"       >SideNote</button>
+   <button class="basicbutton" id="jot"       style="background:cyan;display:none"       >jot</button>
+   <button class="basicbutton" id="hidejot"   style="background:violet;display:none;"    >hidejot</button>
+   <button class="basicbutton" id="jotsave"   style="background:lightgreen;display:none;">jotsave</button>
+   <button class="basicbutton" id="jotcancel" style="background:orange;display:none;"    >jotclear</button>
+   <button class="basicbutton" id="put"       style="background:lightgreen;display:none;">save</button>
+   <button class="basicbutton" id="cancel"    style="background:orange;display:none;"    >cancel</button></div>
+   <textarea  id="makejot" name="makejot" rows="10" style="display:none;" ></textarea>
    <div id="tags"></div><div id="dropdown"></div>
 	<textarea  data-autoresize id="edit" name="edit" rows="2" style="display:none;" ></textarea>
 	 <div id="content">no conntent</div>

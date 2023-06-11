@@ -116,7 +116,26 @@
 		}
 	}
 
-
+		function putPaste (data, opts){
+						// Find the message box element
+		data.section='__sys__';
+		data.opts = opts;//console.log("---------------",data.url)
+		var messageBox = document.getElementById("tiddlyclip-message-box");
+		if(messageBox) {
+			// Create the message element and put it in the message box
+			var message = document.createElement("div");
+			message.setAttribute("data-tiddlyclip-category",data.category);
+			message.setAttribute("data-tiddlyclip-pageData",JSON.stringify({data:data}));
+			message.setAttribute("data-tiddlyclip-currentsection",0);
+			messageBox.appendChild(message);
+			//console.log("start put ");
+			// Create and dispatch the custom event to the extension
+			var event = document.createEvent("Events");
+			event.initEvent("tiddlyclip-save-file",true,false);
+			message.dispatchEvent(event);
+			//console.log("paste event sent");
+		}
+	}
 	   chrome.runtime.onMessage.addListener(
 			  function(request, sender, sendResponse) {console.log("action",request.action)
 				//here we need to check that the tiddlywiki is open for cuts - in the new interactive way.
@@ -152,6 +171,13 @@
 				}
 				if (request.action == 'getMeta') {
 					sendResponse(getMeta());
+					return;
+				}
+				if (request.action == 'paste') {
+					injectMessageBox(document);
+					putPaste(request.data, request.opts);
+					sendResponse();
+					return;
 				}
 		});
 		
