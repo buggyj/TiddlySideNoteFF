@@ -434,7 +434,7 @@ window.addEventListener('unload', function() {
 	let x = document.querySelector('#edit')
 				current.text = x.value;
 				current.tags = JSON.stringify(tags);
-				browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
+				if (current.url && x.value) browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
 					//console.log(res)	
 
 	});
