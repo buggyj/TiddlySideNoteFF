@@ -223,7 +223,7 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 	editvalue = x.value;
 	x.value = "";//this stops multiple calls to save 
 	x.style.display = "none";
-			browser.tabs.sendMessage(tabs[0].id, {action : 'getMeta'}, function (meta)	{ 
+	browser.tabs.sendMessage(tabs[0].id, {action : 'getMeta'}, function (meta)	{ 
 			if (meta){	console.log("meta",meta.description,meta.mediaImage);
 				current.mediaImage=meta.mediaImage;
 				current.description=meta.description;
