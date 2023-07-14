@@ -227,13 +227,15 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 			if (meta){	console.log("meta",meta.description,meta.mediaImage);
 				current.mediaImage=meta.mediaImage;
 				current.description=meta.description;
+				current.favIconUrl=meta.faviconUrl;
 			} else {
 				console.log ("meta not defined");
 				current.mediaImage="";
 				current.description="";
+				current.favIconUrl="";
 			}
 			current.url = tabs[0].url;
-			current.favIconUrl=tabs[0].favIconUrl;
+			//current.favIconUrl=tabs[0].favIconUrl;
 			current.title=tabs[0].title;
 			current.text = "";//edited text
 			current.tags = [];//edited values
@@ -259,6 +261,21 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 
   //console.log(tabs[0].url);
 }
+
+function tagsChanged(tags) {
+  if (tags.length !== unedittags.length) {
+    return true;
+  }
+
+  for (let i = 0; i < tags.length; i++) {
+    if (tags[i] !== unedittags[i]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function getNote(tabs) {
 	let x = document.querySelector('#edit'),editvalue;
 	let y = document.querySelector('#content');
@@ -281,7 +298,7 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 		//first put old values
 		  current.text = editvalue;
 		  current.tags = JSON.stringify(tags);
-			if (current.url && editvalue) browser.tabs.sendMessage(homeTab, {action : 'putTid', opts:"puts",data:current},function(res){
+			if (current.url && (editvalue || tagsChanged(tags))) browser.tabs.sendMessage(homeTab, {action : 'putTid', opts:"puts",data:current},function(res){
 				//console.log(res);
 			});
 			//get new url/tab data
@@ -289,13 +306,15 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 				if (meta){	console.log("meta",meta.description,meta.mediaImage);
 					current.mediaImage=meta.mediaImage;
 					current.description=meta.description;
+					current.favIconUrl=meta.faviconUrl;
 			} else {
 				console.log ("meta not defined");
 				current.mediaImage="";
 				current.description="";
+				current.favIconUrl="";
 			}
 				current.url = tabs[0].url;
-				current.favIconUrl=tabs[0].favIconUrl;
+				//current.favIconUrl=tabs[0].favIconUrl;
 				current.title=tabs[0].title;
 				current.text = "";
 				current.tags = [];

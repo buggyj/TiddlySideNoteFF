@@ -11,7 +11,22 @@
 			else if ( metaTags[t].getAttribute('property')=="og:image") mediaImage = metaTags[t].content;
 			else if ( metaTags[t].getAttribute('property')=="og:description") description = metaTags[t].content;
 		}
-		return {description:description, mediaImage:mediaImage};
+		
+
+		var el = document.querySelector("link[rel='icon'], link[rel='shortcut icon']");
+		if (el) {
+		var faviconUrl = new URL(el.href, window.location.href).href;
+		if (faviconUrl.startsWith("http") || faviconUrl.startsWith("//") ||faviconUrl.startsWith("data:")) {
+			//ok
+		} else {
+		  faviconUrl= new URL(faviconUrl, window.location.origin).href;
+		}
+		} else {
+		  faviconUrl = "";
+		}
+
+
+		return {description:description, mediaImage:mediaImage, faviconUrl:faviconUrl||""};
 	}
 	
 
@@ -163,6 +178,7 @@
 
 					callbacks["__TSNput__"]= function (x){
 						//console.log("puttid callback  ");
+						console.log("puttid callback  "+x.txt);
 						sendResponse("saved");
 						callbacks["__TSNput__"] = null;
 					}
