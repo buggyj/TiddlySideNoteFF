@@ -16,7 +16,7 @@ chrome.contextMenus.onClicked.addListener((data, tab) => {
 	console.log("url",tab.url);
 	homeTab = tab.id;
 	browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/startsidepanel.html")});
-	chrome.tabs.sendMessage(homeTab, {action : 'getTid', data:{url:tab.url},opts:"render"},function(res){
+	chrome.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:tab.url},opts:"render"},function(res){
 		if (res) chrome.storage.local.set({'conected': tab.url, 'homeTab':tab.id}, function() {
 			console.log("connected var set");
 			browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})

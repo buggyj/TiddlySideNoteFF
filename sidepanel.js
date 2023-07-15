@@ -18,7 +18,7 @@ function addAutoResize() {
  addAutoResize();
 
 var current= {};
-current.url  = null;
+current.pageRef  = null;
 var tags;
 var taglist = [];
 var homeTab = "";
@@ -118,14 +118,14 @@ document.querySelector('#get').addEventListener('click', function() {
 
 	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 	  var currUrl = tabs[0].url;
-		browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{url:currUrl}, opts:"edit"},function(res){
+		browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:currUrl}, opts:"edit"},function(res){
 			let y = document.querySelector('#content');
 			let x = document.querySelector('#edit');
 			y.style.display = "none";
 			taglist = (JSON.parse(res.aux)).taglist||[];
 			puttags(res.data,true);
 			//console.log("res.data ",res.data);
-			x.value=(JSON.parse(res.data)).text;
+			x.value=(JSON.parse(res.data)).sideText;
 			x.style.display = "block";
 			x.dispatchEvent(new Event("input"))
 
@@ -157,16 +157,16 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 							
 		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		  var currUrl = tabs[0].url;
-				current.text = x.value;
+				current.sideText = x.value;
 				current.tags = JSON.stringify(tags);
 				browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
 					//console.log(res);
-					browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{url:currUrl},opts:"render"},function(res){
+					browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:currUrl},opts:"render"},function(res){
 						let data = JSON.parse(res.data); 
 						let aux = JSON.parse(res.aux);
 						console.log("res.aux ",res.aux);
 						taglist = aux.taglist;
-						y.innerHTML=data.text;
+						y.innerHTML=data.sideText;
 						puttags(res.data);
 						if (aux.new=='true') {
 							but.style.background='cyan';
@@ -234,17 +234,17 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 				current.description="";
 				current.favIconUrl="";
 			}
-			current.url = tabs[0].url;
+			current.pageRef = tabs[0].url;
 			//current.favIconUrl=tabs[0].favIconUrl;
-			current.title=tabs[0].title;
-			current.text = "";//edited text
+			current.pageTitle=tabs[0].title;
+			current.sideText = "";//edited text
 			current.tags = [];//edited values
-			browser.tabs.sendMessage(homeTab, {action : 'getTid',data:{url:current.url} ,opts:"render"},function(res){
+			browser.tabs.sendMessage(homeTab, {action : 'getTid',data:{pageRef:current.pageRef} ,opts:"render"},function(res){
 				let data = JSON.parse(res.data); 
 				let aux = JSON.parse(res.aux);
 				console.log("res.aux ",res.aux);
 				taglist = aux.taglist;
-				y.innerHTML=data.text;
+				y.innerHTML=data.sideText;
 				puttags(res.data);
 				if (aux.new=='true') {
 					but.style.background='cyan';
@@ -296,9 +296,9 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 
 		browser.storage.local.get({homeTab:""}, function(items){  
 		//first put old values
-		  current.text = editvalue;
+		  current.sideText = editvalue;
 		  current.tags = JSON.stringify(tags);
-			if (current.url && (editvalue || tagsChanged(tags))) browser.tabs.sendMessage(homeTab, {action : 'putTid', opts:"puts",data:current},function(res){
+			if (current.pageRef && (editvalue || tagsChanged(tags))) browser.tabs.sendMessage(homeTab, {action : 'putTid', opts:"puts",data:current},function(res){
 				//console.log(res);
 			});
 			//get new url/tab data
@@ -313,17 +313,17 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 				current.description="";
 				current.favIconUrl="";
 			}
-				current.url = tabs[0].url;
+				current.pageRef = tabs[0].url;
 				//current.favIconUrl=tabs[0].favIconUrl;
-				current.title=tabs[0].title;
-				current.text = "";
+				current.pageTitle=tabs[0].title;
+				current.sideText = "";
 				current.tags = [];
-				browser.tabs.sendMessage(items.homeTab, {action : 'getTid',data:{url:current.url} ,opts:"render"},function(res){
+				browser.tabs.sendMessage(items.homeTab, {action : 'getTid',data:{pageRef:current.pageRef} ,opts:"render"},function(res){
 				let data = JSON.parse(res.data); 
 				let aux = JSON.parse(res.aux);
 				console.log("res.aux ",res.aux);
 				taglist = aux.taglist;
-				y.innerHTML=data.text;
+				y.innerHTML=data.sideText;
 				puttags(res.data);
 				if (aux.new=='true') {
 					but.style.background='cyan';
@@ -371,7 +371,7 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 							
 		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
 		  var currUrl = tabs[0].url;
-				current.text = x.value;
+				current.sideText = x.value;
 				x.value="";
 				current.category ="jot";
 				browser.tabs.sendMessage(homeTab, {action : 'paste', data:current, opts:"put"},function(res){
@@ -451,9 +451,9 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {console.log("onU
 
 window.addEventListener('unload', function() {
 	let x = document.querySelector('#edit')
-				current.text = x.value;
+				current.sideText = x.value;
 				current.tags = JSON.stringify(tags);
-				if (current.url && x.value) browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
+				if (current.pageRef && x.value) browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
 					//console.log(res)	
 
 	});
