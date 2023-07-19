@@ -33,53 +33,45 @@
 	var handler = null;
 	function injectMessageBox(doc) {
 		// Inject the message box
-		var messageBox = doc.getElementById("tiddlyclip-message-box");
-		if(!messageBox) {
-			messageBox = doc.createElement("div");
-			messageBox.id = "tiddlyclip-message-box";
-			messageBox.style.display = "none";
-			doc.body.appendChild(messageBox);
-			//just for debug
-			messageBox["data-install"] = "1";
-			install = 1;
-			console.log ("install:" + install);
-			// Attach the event handler to the message box
-			
+	var parentMB, messageBox = document.getElementById("tiddlyclip-message-box-send");//send to this addon
+	if (!messageBox) {
+		parentMB = document.getElementById("tiddlyclip-message-box");
+		if(!parentMB) {
+			parentMB = doc.createElement("div");
+			parentMB.id = "tiddlyclip-message-box";
+			parentMB.style.display = "none";
+			doc.body.appendChild(parentMB);
 		}
-		else {
-			//just of debug
-			if (messageBox["data-install"]) {
-				install = parseInt (messageBox["data-install"])+1;
-				messageBox["data-install"] = install;
-				console.log ("install:" + install);
-			} else {
-				install = "1";
-				messageBox["data-install"] = install;
-				console.log ("install:" + install);
-			}
 			
-		}
-		messageBox.removeEventListener("tc-send-event",handler);
-		messageBox.addEventListener("tc-send-event",handler = function(event) {
-				
-				// Get the details from the message
-				var message = event.target,
-				 msg = {};
-				
-				msg.txt = message.getAttribute("data-text");
-				msg.aux = message.getAttribute("data-aux");
-				msg.extra = message.getAttribute("data-extra");
-				msg.action = message.getAttribute("data-action");
-				msg.version = message.getAttribute("data-version");
-				msg.url = window.location.href;
-				if (msg.action.substring(0,5) !== "__TSN") {console.log (msg.action);return  false;}
-				//console.log ("got show" + msg.action );
-				//event.currentTarget.parentNode.removeChild(message);
-				// Save the file
-				message.parentNode.removeChild(message);
-				if (msg.action in callbacks) {callbacks[msg.action](msg);return false;}
-				return false;
-			},false);
+		messageBox = doc.createElement("div");
+		messageBox.id = "tiddlyclip-message-box-send";
+		messageBox.style.display = "none";
+		parentMB.appendChild(messageBox);
+	}
+	messageBox.removeEventListener("tc-send-event",handler);
+	messageBox.addEventListener("tc-send-event",handler = function(event) {
+			
+			// Get the details from the message
+			var parent, message = event.target,
+			 msg = {};
+			console.log(event);
+			msg.action = message.getAttribute("data-action")||"";
+			if (msg.action.substring(0,5) !== "__TSN") return;
+			
+			msg.txt = message.getAttribute("data-text");
+			msg.aux = message.getAttribute("data-aux");
+			msg.extra = message.getAttribute("data-extra");
+			msg.action = message.getAttribute("data-action");
+			msg.version = message.getAttribute("data-version");
+			msg.url = window.location.href;
+
+			//console.log ("got show" + msg.action );
+			//event.currentTarget.parentNode.removeChild(message);
+			// Save the file
+			message.parentNode.removeChild(message);
+			if (msg.action in callbacks) {callbacks[msg.action](msg);return false;}
+			return false;
+		},false);
 		
 	};
 
