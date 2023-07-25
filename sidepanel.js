@@ -155,36 +155,45 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 	//y.style.display = "block";
 	x.style.display = "none";
 							
-		browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
-		  var currUrl = tabs[0].url;
-				current.sideText = x.value;
-				current.tags = JSON.stringify(tags);
-				browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
-					//console.log(res);
-					browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:currUrl},opts:"render"},function(res){
-						let data = JSON.parse(res.data); 
-						let aux = JSON.parse(res.aux);
-						console.log("res.aux ",res.aux);
-						taglist = aux.taglist;
-						y.innerHTML=data.sideText;
-						puttags(res.data);
-						if (aux.new=='true') {
-							but.style.background='cyan';
-							//but.innerHTML="add"
-						}
-						else {
-							but.style.background='red';
-							//but.innerHTML="edit"
-						}
-						y.style.display = "block";
-						//console.log("reloaded new");
-					});
-					
-					
-					//console.log("res.data ",res.data);(document.querySelector('#content')).innerHTML=res.data;
+	browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+		var currUrl = tabs[0].url;
+		browser.tabs.sendMessage(tabs[0].id, {action : 'getMeta'}, function (meta)	{ 
+			if (meta){	console.log("meta",meta.description,meta.mediaImage);
+				current.mediaImage=meta.mediaImage;
+				current.description=meta.description;
+				current.favIconUrl=meta.faviconUrl;
+			} else {
+				console.log ("meta not defined");
+				current.mediaImage="";
+				current.description="";
+				current.favIconUrl="";
+			}
+			current.sideText = x.value;
+			current.tags = JSON.stringify(tags);
+			browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
+				//console.log(res);
+				browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:currUrl},opts:"render"},function(res){
+					let data = JSON.parse(res.data); 
+					let aux = JSON.parse(res.aux);
+					console.log("res.aux ",res.aux);
+					taglist = aux.taglist;
+					y.innerHTML=data.sideText;
+					puttags(res.data);
+					if (aux.new=='true') {
+						but.style.background='cyan';
+						//but.innerHTML="add"
+					}
+					else {
+						but.style.background='red';
+						//but.innerHTML="edit"
+					}
+					y.style.display = "block";
+					//console.log("reloaded new");
 				});
-
-
+						
+				//console.log("res.data ",res.data);(document.querySelector('#content')).innerHTML=res.data;
+			});
+		});
 	});
 });	
 
@@ -307,12 +316,12 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 					current.mediaImage=meta.mediaImage;
 					current.description=meta.description;
 					current.favIconUrl=meta.faviconUrl;
-			} else {
-				console.log ("meta not defined");
-				current.mediaImage="";
-				current.description="";
-				current.favIconUrl="";
-			}
+				} else {
+					console.log ("meta not defined");
+					current.mediaImage="";
+					current.description="";
+					current.favIconUrl="";
+				}
 				current.pageRef = tabs[0].url;
 				//current.favIconUrl=tabs[0].favIconUrl;
 				current.pageTitle=tabs[0].title;

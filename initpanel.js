@@ -4,4 +4,4 @@ function main(){
 		document.querySelector('#home').innerHTML = items.conected;
 	});
 }
-main();
+//main();
