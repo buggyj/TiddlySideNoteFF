@@ -31,6 +31,29 @@ function restorTags() {
 }
 
 function addDropDown(arr){
+	
+	var arrobj = {};
+	//if (arr.length == 0) return;
+	//if(Array.isArray(arr)) for (var i= 0; i < arr.length - 1; i++) arrobj[arr[i]]=null;
+	//else 
+	arrobj =arr;
+	const tagss = document.getElementById("dropdown");
+	tagss.style.display = "block";
+	const mainDropdown = document.getElementById("main-dropdown");
+				const Dropdown = document.getElementById("dropdown");
+			(function (item) {
+			item.addEventListener("mouseenter", function () {
+				mainDropdown.style.display = "block";
+			});
+		})(Dropdown);
+		// Hide submenu when not hovered
+		(function (item) {
+			item.addEventListener("mouseleave", function () {
+				mainDropdown.style.display = "none";
+			});
+		})(Dropdown);
+        createDropdownMenu(arrobj, mainDropdown);
+	/*
 	var options;
 	if (arr.length == 0) return;
 	options=`<select id="selectdd"><option value="" disabled hidden selected>add tag</option>`;
@@ -39,6 +62,7 @@ function addDropDown(arr){
 	})
 	options+='</select>';
 	document.getElementById("dropdown").innerHTML=options;
+
 	document.querySelector('#selectdd').onchange = function(e){
 		console.log("val is",e.target.value)
 		if (!tags.includes(e.target.value)) {
@@ -47,18 +71,20 @@ function addDropDown(arr){
 		}
 		addDropDown(arr);
 	}
+	*/
 }
 function removeDropDown(){
-	console.log ("remove dropdown");
-  document.getElementById("dropdown").innerHTML="";
+  document.getElementById("main-dropdown").innerHTML="";
+  	const tagss = document.getElementById("dropdown");
+	tagss.style.display = "none";
 }
 function puttags(fields, edit){
-	let w = document.querySelector('#tags');
+	let w = document.querySelector('#tagss');
 	let items = JSON.parse(fields);
 	
 	let html = 'tags: ';
-	tags=items.tags||[];
-	unedittags = tags;
+	tags=items.tags||{};
+	unedittags = JSON.parse(JSON.stringify(tags));//clone
 	for (i in tags) {
 		if (edit) html += `<scan  class="tagpillfalse">${tags[i]}<button id="tags${i}" class="reset-button">[x]</button></scan>`;
 		else html +=  `<button class="tagpill">${tags[i]}</button>`;
@@ -69,7 +95,6 @@ function puttags(fields, edit){
 	if (edit) {
 		for (i in tags) {
 				(function (j) {document.querySelector('#tags'+i).onclick = function(e){
-					console.log('removetag', tags[j]);
 					let value = tags[j];
 					tags = tags.filter(item => item !== value);
 					redoTags(true);
@@ -82,7 +107,7 @@ function puttags(fields, edit){
 
 function redoTags(edit){
 	var i;
-	let w = document.querySelector('#tags');
+	let w = document.querySelector('#tagss');
 
 	
 	let html = 'tags: ';
@@ -95,7 +120,6 @@ function redoTags(edit){
 	if (edit) {
 		for (i in tags) {
 				(function (j) {document.querySelector('#tags'+i).onclick = function(e){
-					console.log('removetag', tags[j]);
 					let value = tags[j];
 					tags = tags.filter(item => item !== value);
 					redoTags(true);
@@ -122,7 +146,7 @@ document.querySelector('#get').addEventListener('click', function() {
 			let y = document.querySelector('#content');
 			let x = document.querySelector('#edit');
 			y.style.display = "none";
-			taglist = (JSON.parse(res.aux)).taglist||[];
+			taglist = (JSON.parse(res.aux)).taglist||{};
 			puttags(res.data,true);
 			//console.log("res.data ",res.data);
 			x.value=(JSON.parse(res.data)).sideText;
@@ -168,6 +192,9 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 				current.description="";
 				current.favIconUrl="";
 			}
+			current.pageRef = tabs[0].url;
+				//current.favIconUrl=tabs[0].favIconUrl;
+			current.pageTitle=tabs[0].title;
 			current.sideText = x.value;
 			current.tags = JSON.stringify(tags);
 			browser.tabs.sendMessage(homeTab, {action : 'putTid', data:current, opts:"put"},function(res){
@@ -495,4 +522,68 @@ browser.storage.local.onChanged.addListener(function (changes){
 	 }
 	
 	});
+
+
+       // Function to handle selecting an option
+        function selectOption(option) {console.log("tags ",tags)
+			if (!tags.includes(option)) {
+				tags.push(option);
+				redoTags(true);
+			} console.log("val ",option)
+        }
+
+        // Function to create the dropdown menu from the array of items
+        function createDropdownMenu(items, parent) {
+			var itemVal;
+            for (var item in items) { console.log(item)
+                const listItem = document.createElement("li");
+				itemVal = items[item];
+                listItem.textContent = item + (itemVal?" \u2794":"");
+                //listItem.classList.add("dropdown-item");
+
+                if (itemVal) {
+                    const submenu = document.createElement("ul");
+                    submenu.classList.add("dropdown-menu");
+                    listItem.appendChild(submenu);
+                    createDropdownMenu(itemVal, submenu);
+                }
+				(function (x) {
+					listItem.addEventListener("click", function (e) {
+						selectOption(x);
+						e.stopPropagation();
+					});
+				})(item);
+                // Hide submenu initially
+                if (itemVal) {
+                    listItem.querySelector("ul").style.display = "none";
+                }
+
+                // Show submenu on hover
+                (function (listItem,itemVal) {
+					listItem.addEventListener("mouseenter", function () {
+						if (itemVal) {
+							const submenu = listItem.querySelector("ul");
+							submenu.style.display = "block";
+
+							// Calculate and set submenu position to align with the parent
+							const parentRect = submenu.getBoundingClientRect();
+							//submenu.style.left = parentRect.right + "px";
+							submenu.style.top = listItem.offsetTop + "px";
+							submenu.style.left = 100 +"px";console.log("bb ",listItem )
+						}
+					});
+				})(listItem,itemVal);
+                // Hide submenu when not hovered
+                (function (listItem,itemVal) {
+					listItem.addEventListener("mouseleave", function () {
+						if (itemVal) {
+							listItem.querySelector("ul").style.display = "none";
+						}
+					});
+				})(listItem,itemVal);
+
+                parent.appendChild(listItem);
+
+            };
+        }
 });
