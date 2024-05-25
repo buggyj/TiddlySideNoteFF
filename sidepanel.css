@@ -1,6 +1,6 @@
        /* Add your custom styles here */
         .dropdown {
-            display: inline-block;
+            display: block;
             position: relative;
         }
 

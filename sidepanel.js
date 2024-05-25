@@ -40,19 +40,19 @@ function addDropDown(arr){
 	const tagss = document.getElementById("dropdown");
 	tagss.style.display = "block";
 	const mainDropdown = document.getElementById("main-dropdown");
-				const Dropdown = document.getElementById("dropdown");
-			(function (item) {
-			item.addEventListener("mouseenter", function () {
-				mainDropdown.style.display = "block";
-			});
-		})(Dropdown);
-		// Hide submenu when not hovered
-		(function (item) {
-			item.addEventListener("mouseleave", function () {
-				mainDropdown.style.display = "none";
-			});
-		})(Dropdown);
-        createDropdownMenu(arrobj, mainDropdown);
+	const DDContainer = document.getElementById("dropdown");
+	(function (item) {
+		item.addEventListener("mouseenter", function () {
+			mainDropdown.style.display = "block";
+		});
+	})(DDContainer);
+	// Hide submenu when not hovered
+	(function (item) {
+		item.addEventListener("mouseleave", function () {
+			mainDropdown.style.display = "none";
+		});
+	})(DDContainer);
+	createDropdownMenu(arrobj, mainDropdown);
 	/*
 	var options;
 	if (arr.length == 0) return;
@@ -78,6 +78,73 @@ function removeDropDown(){
   	const tagss = document.getElementById("dropdown");
 	tagss.style.display = "none";
 }
+
+
+       // Function to handle selecting an option
+        function selectOption(option) {console.log("tags ",tags)
+			if (!tags.includes(option)) {
+				tags.push(option);
+				redoTags(true);
+			} console.log("val ",option)
+        }
+
+        // Function to create the dropdown menu from the array of items
+        function createDropdownMenu(items, parent) {
+			var itemVal;
+            for (var item in items) { console.log(item)
+                const listItem = document.createElement("li");
+				itemVal = items[item];
+                listItem.textContent = item + (itemVal?" \u2794":"");
+                //listItem.classList.add("dropdown-item");
+
+                if (itemVal) {
+                    const submenu = document.createElement("ul");
+                    submenu.classList.add("dropdown-menu");
+                    listItem.appendChild(submenu);
+                    createDropdownMenu(itemVal, submenu);
+                }
+				(function (x) {
+					listItem.addEventListener("click", function (e) {
+						selectOption(x);
+						e.stopPropagation();
+					});
+				})(item);
+                // Hide submenu initially
+                if (itemVal) {
+                    listItem.querySelector("ul").style.display = "none";
+                }
+
+                // Show submenu on hover
+                (function (listItem,itemVal) {
+					listItem.addEventListener("mouseenter", function () {
+						if (itemVal) {
+							const submenu = listItem.querySelector("ul");
+							submenu.style.display = "block";
+
+							// Calculate and set submenu position to align with the parent
+							const parentRect = submenu.getBoundingClientRect();
+							//submenu.style.left = parentRect.right + "px";
+							submenu.style.top = listItem.offsetTop + "px";
+							submenu.style.left = 100 +"px";console.log("bb ",listItem )
+						}
+					});
+				})(listItem,itemVal);
+                // Hide submenu when not hovered
+                (function (listItem,itemVal) {
+					listItem.addEventListener("mouseleave", function () {
+						if (itemVal) {
+							listItem.querySelector("ul").style.display = "none";
+						}
+					});
+				})(listItem,itemVal);
+
+                parent.appendChild(listItem);
+
+            };
+        }
+
+
+
 function puttags(fields, edit){
 	let w = document.querySelector('#tagss');
 	let items = JSON.parse(fields);
@@ -524,66 +591,5 @@ browser.storage.local.onChanged.addListener(function (changes){
 	});
 
 
-       // Function to handle selecting an option
-        function selectOption(option) {console.log("tags ",tags)
-			if (!tags.includes(option)) {
-				tags.push(option);
-				redoTags(true);
-			} console.log("val ",option)
-        }
 
-        // Function to create the dropdown menu from the array of items
-        function createDropdownMenu(items, parent) {
-			var itemVal;
-            for (var item in items) { console.log(item)
-                const listItem = document.createElement("li");
-				itemVal = items[item];
-                listItem.textContent = item + (itemVal?" \u2794":"");
-                //listItem.classList.add("dropdown-item");
-
-                if (itemVal) {
-                    const submenu = document.createElement("ul");
-                    submenu.classList.add("dropdown-menu");
-                    listItem.appendChild(submenu);
-                    createDropdownMenu(itemVal, submenu);
-                }
-				(function (x) {
-					listItem.addEventListener("click", function (e) {
-						selectOption(x);
-						e.stopPropagation();
-					});
-				})(item);
-                // Hide submenu initially
-                if (itemVal) {
-                    listItem.querySelector("ul").style.display = "none";
-                }
-
-                // Show submenu on hover
-                (function (listItem,itemVal) {
-					listItem.addEventListener("mouseenter", function () {
-						if (itemVal) {
-							const submenu = listItem.querySelector("ul");
-							submenu.style.display = "block";
-
-							// Calculate and set submenu position to align with the parent
-							const parentRect = submenu.getBoundingClientRect();
-							//submenu.style.left = parentRect.right + "px";
-							submenu.style.top = listItem.offsetTop + "px";
-							submenu.style.left = 100 +"px";console.log("bb ",listItem )
-						}
-					});
-				})(listItem,itemVal);
-                // Hide submenu when not hovered
-                (function (listItem,itemVal) {
-					listItem.addEventListener("mouseleave", function () {
-						if (itemVal) {
-							listItem.querySelector("ul").style.display = "none";
-						}
-					});
-				})(listItem,itemVal);
-
-                parent.appendChild(listItem);
-
-            };
-        }
 });
