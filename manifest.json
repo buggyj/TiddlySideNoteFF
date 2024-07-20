@@ -30,7 +30,7 @@
   "sidebar_action": {
     "default_icon": "images/tsn48.png",
     "default_title" : "Tiddly Side Note",
-    "default_panel": "startsidepanel.html"
+    "default_panel": "sidepanel.html"
   },
 
   "permissions": [

@@ -1,6 +1,6 @@
 
 var enableJot = false;
-chrome.storage.local.get({enableJot:false}, function(items){
+chrome.storage.local.get({enableJot:true}, function(items){
 enableJot = items.enableJot;
 var offset;
 function addAutoResize() {
@@ -342,6 +342,8 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 			current.pageTitle=tabs[0].title;
 			current.sideText = "";//edited text
 			current.tags = [];//edited values
+			console.log ("this is homeTab "+homeTab)
+			
 			browser.tabs.sendMessage(homeTab, {action : 'getTid',data:{pageRef:current.pageRef} ,opts:"render"},function(res){
 				let data = JSON.parse(res.data); 
 				let aux = JSON.parse(res.aux);
@@ -397,8 +399,10 @@ if (enableJot) 	document.querySelector('#jot').style.display = "block";
 	//first save note
  
 
-		browser.storage.local.get({homeTab:""}, function(items){  
+		browser.storage.session.get({homeTab:""}, function(items){  
 		//first put old values
+		console.log ("is homeTab "+items.homeTab)
+		if (!items.homeTab) return;
 		  current.sideText = editvalue;
 		  current.tags = JSON.stringify(tags);
 			if (current.pageRef && (editvalue || tagsChanged(tags))) browser.tabs.sendMessage(homeTab, {action : 'putTid', opts:"puts",data:current},function(res){
@@ -525,7 +529,7 @@ document.querySelector('#jotcancel').addEventListener('click', function() {
 
 browser.runtime.onMessage.addListener(({ name, data }) => {
   if (name === 'doit') {
-	browser.storage.local.get({conected:"not here again"}, function(items){
+	browser.storage.session.get({conected:"not here again"}, function(items){
 				document.querySelector('#home').innerHTML = items.conected;
 		} 
 	);
@@ -541,6 +545,11 @@ browser.tabs.onActivated.addListener((actTabInfo) => {console.log("onActivated1"
   });
 });
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {console.log("onUpdated1");
+	
+	if (tabId == homeTab && changeInfo.status)	 {chrome.storage.session.set({'conected': "No Tiddlywiki Selected", 'homeTab':""}, function() {
+			console.log("connected var reset");
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			});} else
   if (tab.active && ( changeInfo.status == "complete")) {
  
 		if (tab.windowId == WindowId) {
@@ -552,6 +561,18 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {console.log("onU
 });
 
 
+function tabclose(tabId,changeInfo) {if (tabId == homeTab)  chrome.storage.session.set({'conected': "No Tiddlywiki Selected", 'homeTab':""}, function() {
+			console.log("connected var reset");
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			});}
+function tabchange(tabId,changeInfo) {
+	if (tabId == homeTab && changeInfo.status)	 chrome.storage.session.set({'conected': "No Tiddlywiki Selected", 'homeTab':""}, function() {
+			console.log("connected var reset");
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			});
+}
+browser.tabs.onRemoved.addListener(tabclose);
+//chrome.tabs.onUpdated.addListener(tabchange);
 window.addEventListener('unload', function() {
 	let x = document.querySelector('#edit')
 				current.sideText = x.value;
@@ -565,13 +586,46 @@ window.addEventListener('unload', function() {
 var WindowId =null;
 
 
+
+ /*
+Log the old value and its new value of
+changes in the local storage.
+*/
+function logStorageChange(changes) {
+  const changedItems = Object.keys(changes);
+
+/*  for (const item of changedItems) {
+    console.log(`${item} has changed:`);
+    console.log("Old value: ", changes[item].oldValue);
+    console.log("New value: ", changes[item].newValue);
+  }
+  */
+  if (changes["conected"]) {
+	  if (changes["conected"].newValue && changes["conected"].oldValue && changes["conected"].newValue === changes["conected"].oldValue) return;
+	  if (changes["conected"].newValue) {
+	  document.querySelector('#home').innerHTML = changes["conected"].newValue;
+	  if(changes["conected"].newValue=="No Tiddlywiki Selected") document.querySelector("#contents").style.display = "none";
+	  else document.querySelector("#contents").style.display = "block"; 
+	  homeTab = changes["homeTab"].newValue;
+	  if (homeTab)browser.tabs
+		  .query({ currentWindow: true, active: true })
+		  .then(pullNote, onError)	  
+	  
+	  }
+  }
+}
+
+browser.storage.session.onChanged.addListener(logStorageChange);
+
 function main(){
 	browser.windows.getCurrent({} ,function(Window) {console.log("window is",Window.id);
 		WindowId = Window.id;
 	});
 
-	browser.storage.local.get({conected:"not here",homeTab:""}, function(items){
+	browser.storage.session.get({conected:"No Tiddlywiki selected",homeTab:""}, function(items){  
+		if (!items.homeTab) return;
 		document.querySelector('#home').innerHTML = items.conected;
+		document.querySelector("#contents").style.display = "block";
 		homeTab = items.homeTab;
 		browser.tabs
 		  .query({ currentWindow: true, active: true })

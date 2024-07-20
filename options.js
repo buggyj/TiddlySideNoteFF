@@ -12,7 +12,7 @@ var test;
 // Restores select box and text fields
 function restore_options() {
 		
-  chrome.storage.local.get({enableJot: false}, function(items) {
+  chrome.storage.local.get({enableJot: true}, function(items) {
     document.getElementById("enableJot").checked = items.enableJot;
   });
 }

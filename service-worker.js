@@ -15,11 +15,11 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener((data, tab) => {
 	console.log("url",tab.url);
 	homeTab = tab.id;
-	browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/startsidepanel.html")});
+	//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/startsidepanel.html")});
 	chrome.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:tab.url},opts:"render"},function(res){
-		if (res) chrome.storage.local.set({'conected': tab.url, 'homeTab':tab.id}, function() {
+		if (res) chrome.storage.session.set({'conected': tab.title, 'homeTab':tab.id}, function() {
 			console.log("connected var set");
-			browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
 			});
 	  });
 });
@@ -27,9 +27,15 @@ chrome.contextMenus.onClicked.addListener((data, tab) => {
 
 browser.browserAction.onClicked.addListener(function(){browser.sidebarAction.toggle()});
 
-function tabclose(tabId,changeInfo) {if (tabId == homeTab) browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/startsidepanel.html")});}
+function tabclose(tabId,changeInfo) {if (tabId == homeTab)  chrome.session.local.set({'conected': "No Tiddlywiki Selecte", 'homeTab':""}, function() {
+			console.log("connected var reset");
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			});}
 function tabchange(tabId,changeInfo) {
-	if (tabId == homeTab && changeInfo.status)	browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/startsidepanel.html")});
+	if (tabId == homeTab && changeInfo.status)	 chrome.session.local.set({'conected': "No Tiddlywiki Selecte", 'homeTab':""}, function() {
+			console.log("connected var reset");
+			//browser.sidebarAction.setPanel({panel: browser.runtime.getURL("/sidepanel.html")})
+			});
 }
-chrome.tabs.onRemoved.addListener(tabclose);
-chrome.tabs.onUpdated.addListener(tabchange);
+//chrome.tabs.onRemoved.addListener(tabclose);
+//chrome.tabs.onUpdated.addListener(tabchange);
