@@ -93,8 +93,7 @@
 			messageBox.appendChild(message);
 			//console.log("start get ");
 			// Create and dispatch the custom event to the extension
-			var event = document.createEvent("Events");
-			event.initEvent("tiddlyclip-save-file",true,false);
+			var event = new CustomEvent("tiddlyclip-save-file", { bubbles: true });
 			message.dispatchEvent(event);
 			//console.log("paste event sent");
 		}
@@ -116,8 +115,7 @@
 			messageBox.appendChild(message);
 			//console.log("start put ");
 			// Create and dispatch the custom event to the extension
-			var event = document.createEvent("Events");
-			event.initEvent("tiddlyclip-save-file",true,false);
+			var event = new CustomEvent("tiddlyclip-save-file", { bubbles: true });
 			message.dispatchEvent(event);
 			//console.log("paste event sent");
 		}
@@ -137,8 +135,7 @@
 			messageBox.appendChild(message);
 			//console.log("start put ");
 			// Create and dispatch the custom event to the extension
-			var event = document.createEvent("Events");
-			event.initEvent("tiddlyclip-save-file",true,false);
+			var event = new CustomEvent("tiddlyclip-save-file", { bubbles: true });
 			message.dispatchEvent(event);
 			//console.log("paste event sent");
 		}
