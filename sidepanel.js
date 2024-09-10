@@ -82,10 +82,23 @@ function removeDropDown(){
 
        // Function to handle selecting an option
         function selectOption(option) {console.log("tags ",tags)
-			if (!tags.includes(option)) {
+			if (option[0] === '@') {
+				browser.tabs.query({active: true, currentWindow: true}, function(tabs) {
+					var currUrl = tabs[0].url;
+					browser.tabs.sendMessage(homeTab, {action : 'getTid', data:{pageRef:currUrl}, opts:option},function(res){
+						
+						let y = document.querySelector('#content');
+						y.style.display = "none";
+						taglist = (JSON.parse(res.aux)).taglist||{};
+						removeDropDown()
+						addDropDown(taglist);
+					});
+				});				
+				
+			} else 	if (!tags.includes(option)) {
 				tags.push(option);
 				redoTags(true);
-			} console.log("val ",option)
+			} 
         }
 
         // Function to create the dropdown menu from the array of items
