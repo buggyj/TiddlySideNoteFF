@@ -8,9 +8,9 @@ function setupContextMenu() {
   });
 }
 
-chrome.runtime.onInstalled.addListener(() => {
+//chrome.runtime.onInstalled.addListener(() => {
   setupContextMenu();
-});
+//});
 
 chrome.contextMenus.onClicked.addListener((data, tab) => {
 	console.log("url",tab.url);
